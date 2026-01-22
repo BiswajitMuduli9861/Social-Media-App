@@ -10,11 +10,11 @@ const Layout = () => {
   const user = dummyUserData;
   const [sidebarOpen, setSidebarOpen] = useState(false)
   return user ? (
-    <div className='w-full flex h-screen'>
+    <div className='w-full flex h-[97.4vh]'>
 
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
 
-      <div>
+      <div className='w-full'>
         <Outlet/>
       </div>
       {
