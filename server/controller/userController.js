@@ -40,8 +40,8 @@ export const updateUserData = async (req, res) => {
             location,
             full_name
         }
-        const profile = req.files.profile && req.files.profile[0]
-        const cover = req.files.cover && req.files.cover[0]
+        const profile = req.files?.profile && req.files?.profile?.[0]
+        const cover = req.files?.cover && req.files?.cover?.[0]
         // console.log("42", profile, cover)
 
         if (profile) {
