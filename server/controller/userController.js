@@ -92,11 +92,12 @@ export const discoverUser = async (req, res) => {
 
         const allUsers = await User.find(
             {
+                _id: { $ne: userId },   // current user ko exclude
                 $or: [
-                    { username: new RegExp(input, 'i') },
-                    { email: new RegExp(input, i) },
-                    { full_name: new RegExp(input, i) },
-                    { location: new RegExp(input, i) },
+                    { username: { $regex: input, $options: 'i' } },
+                { email: { $regex: input, $options: 'i' } },
+                { full_name: { $regex: input, $options: 'i' } },
+                { location: { $regex: input, $options: 'i' } },
                 ]
             }
         )
@@ -199,24 +200,70 @@ export const sendConnectionRequest = async (req, res) => {
     }
 }
 //Get User Connection
+// export const getUserConnections = async (req, res) => {
+//     try {
+//         console.log("HIi")
+//         const { userId } = req.auth();
+//         const user = await User.findById(userId).populate('connections followers following')
+
+
+//         const connections = user.connections
+//         const followers = user.followers
+//         const following = user.following
+
+//         const pendingConnections = (await Connection.find({to_user_id: userId, status: 'pending'}).populate('from_user_id')).map(connection => connection.from_user_id)
+
+//         res.json({success: true, connections, followers, following, pendingConnections})
+
+//     } catch (error) {
+//         console.log(error)
+//         res.json({ success: false, message: error.message })
+//     }
+// } 
+
 export const getUserConnections = async (req, res) => {
-    try {
-        const { userId } = req.auth();
-        const user = await User.findById(userId).populate('connections, followers, following')
+  try {
+    const { userId } = req.auth();
 
-        const connections = user.connections
-        const followers = user.followers
-        const following = user.following
+    console.log("AUTH USER ID:", userId);
 
-        const pendingConnection = (await Connection.find({to_user_id: userId, status: 'pending'}).populate('from_user_id')).map(connection => connection.from_user_id)
+    const user = await User.findById(userId)
+      .populate('connections followers following');
 
-        res.json({success: true, connections, followers, following, pendingConnection})
-
-    } catch (error) {
-        console.log(error)
-        res.json({ success: false, message: error.message })
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found in database"
+      });
     }
-}
+
+    const connections = user.connections;
+    const followers = user.followers;
+    const following = user.following;
+
+    const pendingConnections = await Connection.find({
+      to_user_id: userId,
+      status: 'pending'
+    }).populate('from_user_id');
+
+    res.json({
+      success: true,
+      connections,
+      followers,
+      following,
+      pendingConnections: pendingConnections.map(c => c.from_user_id)
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+
 //Accept Connection Request
 export const acceptConnectionRequest = async (req, res) => {
     try {

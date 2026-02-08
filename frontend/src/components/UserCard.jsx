@@ -39,6 +39,7 @@ const navigate = useNavigate()
             })
             if(data.success){
                 toast.success(data.message)
+                dispatch(fetchUser(await getToken()))
             }else{
                 toast.error(data.message)
             }

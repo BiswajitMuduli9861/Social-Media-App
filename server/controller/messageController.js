@@ -4,7 +4,7 @@ import Message from '../models/Message.js';
 
 
 //create an empty object to store server side event connection
-const connections = {};
+export const connections = {};
 
 //controller function for the server side events endpoint
 export const sseController = (req, res) => {
@@ -36,7 +36,7 @@ export const sendMessage = async (req, res) => {
         const { userId } = req.auth();
         const { to_user_id, text } = req.body;
         const image = req.file;
-
+        console.log("MEssage Controller")
         let media_url = '';
         let message_type = image ? 'image' : 'text'
 

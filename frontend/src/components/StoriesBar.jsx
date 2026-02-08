@@ -31,7 +31,7 @@ const StoriesBar = () => {
 
   useEffect(() => {
     fetchStories()
-  }, [])
+  }, [stories])
   return (
     <div className='w-screen sm:w-[calc(100vw-240px)] lg:max-w-2xl no-scrollbar overflow-x-auto px-4'>
       <div className='flex gap-4 pb-5'>
